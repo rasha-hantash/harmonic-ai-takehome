@@ -1,0 +1,82 @@
+{
+  "hash": "a29931e3",
+  "configHash": "8805edb8",
+  "lockfileHash": "36076d02",
+  "browserHash": "8bd895a5",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "2842ce61",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "f1ebc61c",
+      "needsInterop": true
+    },
+    "@mui/material/CssBaseline": {
+      "src": "../../node_modules/@mui/material/CssBaseline/index.js",
+      "file": "@mui_material_CssBaseline.js",
+      "fileHash": "a69adea2",
+      "needsInterop": false
+    },
+    "@mui/material/styles": {
+      "src": "../../node_modules/@mui/material/styles/index.js",
+      "file": "@mui_material_styles.js",
+      "fileHash": "5bfe969b",
+      "needsInterop": false
+    },
+    "axios": {
+      "src": "../../node_modules/axios/index.js",
+      "file": "axios.js",
+      "fileHash": "1dbb4fb4",
+      "needsInterop": false
+    },
+    "@mui/x-data-grid": {
+      "src": "../../node_modules/@mui/x-data-grid/index.js",
+      "file": "@mui_x-data-grid.js",
+      "fileHash": "df9dfa23",
+      "needsInterop": false
+    },
+    "@mui/material": {
+      "src": "../../node_modules/@mui/material/index.js",
+      "file": "@mui_material.js",
+      "fileHash": "4a86b884",
+      "needsInterop": false
+    },
+    "lucide-react": {
+      "src": "../../node_modules/lucide-react/dist/esm/lucide-react.js",
+      "file": "lucide-react.js",
+      "fileHash": "95d1d6f4",
+      "needsInterop": false
+    }
+  },
+  "chunks": {
+    "chunk-BGF7WH6A": {
+      "file": "chunk-BGF7WH6A.js"
+    },
+    "chunk-KE5D6IL4": {
+      "file": "chunk-KE5D6IL4.js"
+    },
+    "chunk-ZIYUGMGG": {
+      "file": "chunk-ZIYUGMGG.js"
+    },
+    "chunk-TL4O2AKG": {
+      "file": "chunk-TL4O2AKG.js"
+    },
+    "chunk-AZ6YJ2RM": {
+      "file": "chunk-AZ6YJ2RM.js"
+    },
+    "chunk-IP2DGOEK": {
+      "file": "chunk-IP2DGOEK.js"
+    },
+    "chunk-65KY755N": {
+      "file": "chunk-65KY755N.js"
+    },
+    "chunk-V4OQ3NZ2": {
+      "file": "chunk-V4OQ3NZ2.js"
+    }
+  }
+}
