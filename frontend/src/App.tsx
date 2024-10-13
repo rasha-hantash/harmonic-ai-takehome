@@ -1,20 +1,9 @@
-// import "./App.css";
-
-import CssBaseline from "@mui/material/CssBaseline";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useEffect, useState } from "react";
-// import CompanyTable from "./components/OldCompanyTable";
 import CompanyTable from "./components/CompanyTable";
 import Sidebar from "./components/Sidebar";
 import { getCollectionsMetadata } from "./utils/jam-api";
 import useApi from "./utils/useApi";
-
-
-// const darkTheme = createTheme({
-//   palette: {
-//     mode: "dark",
-//   },
-// });
+// import './App.css';
 
 function App() {
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>();
@@ -25,13 +14,10 @@ function App() {
   }, [collectionResponse]);
 
   return (
-      // <CssBaseline />
-      
-      <div className="flex" >
-        
+
+      <div className="flex" >        
         <Sidebar />
-        <CompanyTable/>
-        
+        <CompanyTable/>       
       </div>
   );
 }
