@@ -7,17 +7,25 @@ import useApi from "./utils/useApi";
 
 function App() {
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>();
-  const { data: collectionResponse } = useApi(() => getCollectionsMetadata());
+  const { data: collections } = useApi(() => getCollectionsMetadata());
+  // const {data: companies} = useApi(() => getC());
 
   useEffect(() => {
-    setSelectedCollectionId(collectionResponse?.[0]?.id);
-  }, [collectionResponse]);
+    setSelectedCollectionId(collections?.[0]?.id);
+  }, [collections]);
 
   return (
 
       <div className="flex" >        
-        <Sidebar />
-        <CompanyTable/>       
+        <Sidebar 
+        collections={collections || []} 
+        selectedCollectionId={selectedCollectionId}
+        setSelectedCollectionId={setSelectedCollectionId}
+      />
+      <CompanyTable
+        selectedCollectionId={selectedCollectionId}
+        collections={collections || []}
+      />     
       </div>
   );
 }
