@@ -68,6 +68,10 @@ def seed_database(db: Session):
     db.bulk_save_objects(associations)
     db.commit()
 
+    ai_companies = database.CompanyCollection(collection_name="AI Companies")
+    db.add(ai_companies)
+    db.commit()
+
     db.execute(
         text("""
 CREATE OR REPLACE FUNCTION throttle_updates()

@@ -1,178 +1,171 @@
-import React, {
-  useCallback,
-  useEffect,
-  useState,
-  useRef,
-  useLayoutEffect,
-} from "react";
 import {
-  getCollectionsById,
-  updateLikedCollection,
-  ICollection,
-  ICompany,
-} from "../utils/jam-api";
-import Lists from "./Lists";
-import PulsingLoadingBar from "./LoadingBar";
-import { Heart } from "lucide-react";
-
-interface CompanyWithLoading extends ICompany {
-  isLoading?: boolean;
-}
-
-interface CompanyTableProps {
-  selectedCollectionId: string | undefined;
-  collections: ICollection[];
-}
-// todo figure out why it isn't ordering the companies by id
-// todo figure out why upon refresh the box is checked
-
-const CompanyTable = ({ selectedCollectionId }: CompanyTableProps) => {
-  const [companies, setCompanies] = useState<CompanyWithLoading[]>([]);
-  const [total, setTotal] = useState<number>(0);
-  //   const [offset, setOffset] = useState<number>(0);
-  const [page, setPage] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(25);
-  const [selectedCompanies, setSelectedCompanies] = useState<
-    CompanyWithLoading[]
-  >([]);
-
-  const checkboxRef = useRef<HTMLInputElement>(null);
-  const [checked, setChecked] = useState<boolean>(false);
-  const [indeterminate, setIndeterminate] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (selectedCollectionId) {
-      fetchCompanies();
-    }
-  }, [selectedCollectionId, page, pageSize]);
-
-  const fetchCompanies = async () => {
-    const offset = page * pageSize;
-    const response = await getCollectionsById(
-      selectedCollectionId!,
-      offset,
-      pageSize
-    );
-    setCompanies(response.companies);
-    setTotal(response.total);
-  };
-
-  useEffect(() => {
-    setPage(0);
-  }, [selectedCollectionId]);
-
-  useLayoutEffect(() => {
-    updateCheckboxState();
-  }, [selectedCompanies]);
-
-  const updateCheckboxState = () => {
-    const isIndeterminate =
-      selectedCompanies.length > 0 &&
-      selectedCompanies.length < companies.length;
-    setChecked(selectedCompanies.length === companies.length);
-    setIndeterminate(isIndeterminate);
-    if (checkboxRef.current) {
-      checkboxRef.current.indeterminate = isIndeterminate;
-    }
-  };
-
-  const toggleAll = () => {
-    setSelectedCompanies(checked || indeterminate ? [] : companies);
-    setChecked(!checked && !indeterminate);
-    setIndeterminate(false);
-  };
-
-  const toggleCompany = (company: ICompany) => {
-    setSelectedCompanies((prevSelected) =>
-      prevSelected.includes(company)
-        ? prevSelected.filter((c) => c.id !== company.id)
-        : [...prevSelected, company]
-    );
-  };
-
-  const handlePageChange = (newPage: number) => {
-    setPage(newPage);
-  };
-
-  const handlePageSizeChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const newPageSize = Number(event.target.value);
-    setPageSize(newPageSize);
-    setPage(0); // Reset to first page when changing page size
-  };
-  const handleAddToLiked = useCallback(async () => {
-    if (selectedCompanies.length === 0) return;
-
-    // Set loading state for selected companies
-    setCompanies((prevCompanies) =>
-      prevCompanies.map((company) =>
-        selectedCompanies.some((selected) => selected.id === company.id)
-          ? { ...company, isLoading: true }
-          : company
-      )
-    );
-
-    try {
-      const selectedIds = selectedCompanies.map((company) => company.id);
-      await updateLikedCollection(selectedIds);
-
-      // Update companies state to reflect liked status and remove loading state
+    useCallback,
+    useEffect,
+    useState,
+    useRef,
+    useLayoutEffect,
+    ChangeEvent,
+  } from "react";
+  import {
+    getCollectionsById,
+    updateLikedCollection,
+    ICollection,
+    ICompany,
+  } from "../utils/jam-api";
+  import Lists from "./Lists";
+  import PulsingLoadingBar from "./LoadingBar";
+  import { Heart } from "lucide-react";
+  
+  interface CompanyWithLoading extends ICompany {
+    isLoading?: boolean;
+  }
+  
+  interface CompanyTableProps {
+    selectedCollectionId: string | undefined;
+    collections: ICollection[];
+  }
+  
+  const CompanyTable = ({ selectedCollectionId }: CompanyTableProps) => {
+    const [companies, setCompanies] = useState<CompanyWithLoading[]>([]);
+    const [total, setTotal] = useState<number>(0);
+    const [page, setPage] = useState<number>(0);
+    const [pageSize, setPageSize] = useState<number>(25);
+    const [selectedCompanies, setSelectedCompanies] = useState<
+      CompanyWithLoading[]
+    >([]);
+  
+    const checkboxRef = useRef<HTMLInputElement>(null);
+    const [checked, setChecked] = useState<boolean>(false);
+    const [indeterminate, setIndeterminate] = useState<boolean>(false);
+  
+    useEffect(() => {
+      if (selectedCollectionId) {
+        fetchCompanies();
+      }
+    }, [selectedCollectionId, page, pageSize]);
+  
+    const fetchCompanies = async () => {
+      const offset = page * pageSize;
+      const response = await getCollectionsById(
+        selectedCollectionId!,
+        offset,
+        pageSize
+      );
+      setCompanies(response.companies);
+      setTotal(response.total);
+    };
+  
+    useEffect(() => {
+      setPage(0);
+    }, [selectedCollectionId]);
+  
+    useLayoutEffect(() => {
+      updateCheckboxState();
+    }, [selectedCompanies]);
+  
+    const updateCheckboxState = () => {
+      const isIndeterminate =
+        selectedCompanies.length > 0 &&
+        selectedCompanies.length < companies.length;
+      setChecked(selectedCompanies.length === companies.length);
+      setIndeterminate(isIndeterminate);
+      if (checkboxRef.current) {
+        checkboxRef.current.indeterminate = isIndeterminate;
+      }
+    };
+  
+    const toggleAll = () => {
+      setSelectedCompanies(checked || indeterminate ? [] : companies);
+      setChecked(!checked && !indeterminate);
+      setIndeterminate(false);
+    };
+  
+    const toggleCompany = (company: ICompany) => {
+      setSelectedCompanies((prevSelected) =>
+        prevSelected.includes(company)
+          ? prevSelected.filter((c) => c.id !== company.id)
+          : [...prevSelected, company]
+      );
+    };
+  
+    const handlePageChange = (newPage: number) => {
+      setPage(newPage);
+    };
+  
+    const handlePageSizeChange = (event: ChangeEvent<HTMLSelectElement>) => {
+      const newPageSize = Number(event.target.value);
+      setPageSize(newPageSize);
+      setPage(0);
+    };
+  
+    const handleAddToLiked = useCallback(async () => {
+      if (selectedCompanies.length === 0) return;
+  
       setCompanies((prevCompanies) =>
         prevCompanies.map((company) =>
           selectedCompanies.some((selected) => selected.id === company.id)
-            ? { ...company, liked: true, isLoading: false }
+            ? { ...company, isLoading: true }
             : company
         )
       );
-
-      // Clear selected companies
-      setSelectedCompanies([]);
-    } catch (error) {
-      console.error("Error updating liked companies:", error);
-
-      // Remove loading state in case of error
-      setCompanies((prevCompanies) =>
-        prevCompanies.map((company) =>
-          selectedCompanies.some((selected) => selected.id === company.id)
-            ? { ...company, isLoading: false }
-            : company
-        )
-      );
-    }
-  }, [selectedCompanies, setCompanies, setSelectedCompanies]);
-
-  return (
-    <div className="w-full px-4 sm:px-6 lg:px-8">
-      <TableHeader handleAddToLiked={handleAddToLiked} total={total} />
-      <div className="mt-2 flow-root">
-        <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="inline-block min-w-full align-middle">
-            <table className="min-w-full divide-y divide-gray-300">
-              <TableHead
-                checkboxRef={checkboxRef}
-                checked={checked}
-                toggleAll={toggleAll}
-              />
-              <TableBody
-                companies={companies}
-                selectedCompanies={selectedCompanies}
-                toggleCompany={toggleCompany}
-              />
-            </table>
+  
+      try {
+        const selectedIds = selectedCompanies.map((company) => company.id);
+        await updateLikedCollection(selectedIds);
+  
+        setCompanies((prevCompanies) =>
+          prevCompanies.map((company) =>
+            selectedCompanies.some((selected) => selected.id === company.id)
+              ? { ...company, liked: true, isLoading: false }
+              : company
+          )
+        );
+  
+        setSelectedCompanies([]);
+      } catch (error) {
+        console.error("Error updating liked companies:", error);
+  
+        setCompanies((prevCompanies) =>
+          prevCompanies.map((company) =>
+            selectedCompanies.some((selected) => selected.id === company.id)
+              ? { ...company, isLoading: false }
+              : company
+          )
+        );
+      }
+    }, [selectedCompanies, setCompanies, setSelectedCompanies]);
+  
+    return (
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <TableHeader handleAddToLiked={handleAddToLiked} total={total} />
+        <div className="mt-2 flow-root">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div className="inline-block min-w-full align-middle">
+              <table className="min-w-full divide-y divide-gray-300">
+                <TableHead
+                  checkboxRef={checkboxRef}
+                  checked={checked}
+                  toggleAll={toggleAll}
+                />
+                <TableBody
+                  companies={companies}
+                  selectedCompanies={selectedCompanies}
+                  toggleCompany={toggleCompany}
+                />
+              </table>
+            </div>
           </div>
         </div>
+        <Pagination
+          page={page}
+          pageSize={pageSize}
+          total={total}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+        />
       </div>
-      <Pagination
-        page={page}
-        pageSize={pageSize}
-        total={total}
-        onPageChange={handlePageChange}
-        onPageSizeChange={handlePageSizeChange}
-      />
-    </div>
-  );
-};
+    );
+  };
 
 interface TableHeaderProps {
   handleAddToLiked: () => void;
