@@ -45,11 +45,6 @@ const navigation = [
     current: false,
   },
 ];
-const favorites = [
-  { id: 1, name: "Liked", href: "#", initial: "L", current: false },
-  { id: 2, name: "AI Companies", href: "#", initial: "A", current: false },
-  { id: 3, name: "Workcation", href: "#", initial: "W", current: false },
-];
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
