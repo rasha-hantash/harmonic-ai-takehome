@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef, useLayoutEffect } from "react";
-import { getCollectionsById, ICollection, ICompany } from "../utils/jam-api";
+import { getCollectionsById, updateLikedCollection, ICollection, ICompany } from "../utils/jam-api";
 import Lists from "./Lists";
 
 interface CompanyWithLoading extends ICompany {
@@ -10,6 +10,7 @@ interface CompanyTableProps {
   selectedCollectionId: string | undefined;
   collections: ICollection[];
 }
+// todo figure out why it isn't ordering the companies by id 
 
 const CompanyTable = ({
     selectedCollectionId,
@@ -81,38 +82,52 @@ const CompanyTable = ({
     setPage(0);  // Reset to first page when changing page size
     
   };
-
-//   const handleAddToLiked = useCallback(async () => {
-//     setCompanies(prevResponse => 
-//       prevResponse.map(row => 
-//         selectionModel.includes(row.id) ? { ...row, isLoading: true } : row
-//       )
-//     );
-
-//     setSelectionModel([]);
-
-//     try {
-//       const selectedIds = selectionModel.map(id => Number(id));
-//       await updateLikedCollection(selectedIds);
+  const handleAddToLiked = useCallback(async () => {
+    if (selectedCompanies.length === 0) return;
+  
+    // Set loading state for selected companies
+    setCompanies(prevCompanies => 
+      prevCompanies.map(company => 
+        selectedCompanies.some(selected => selected.id === company.id)
+          ? { ...company, isLoading: true }
+          : company
+      )
+    );
+  
+    try {
+      const selectedIds = selectedCompanies.map(company => company.id);
+      await updateLikedCollection(selectedIds);
       
-//       setResponse(prevResponse => 
-//         prevResponse.map(row => 
-//           selectionModel.includes(row.id) ? { ...row, liked: true, isLoading: false } : row
-//         )
-//       );
-//     } catch (error) {
-//       console.error('Error updating liked companies:', error);
-//       setResponse(prevResponse => 
-//         prevResponse.map(row => 
-//           selectionModel.includes(row.id) ? { ...row, isLoading: false } : row
-//         )
-//       );
-//     }
-//   }, [selectionModel]);
+      // Update companies state to reflect liked status and remove loading state
+      setCompanies(prevCompanies => 
+        prevCompanies.map(company => 
+          selectedCompanies.some(selected => selected.id === company.id)
+            ? { ...company, liked: true, isLoading: false }
+            : company
+        )
+      );
+  
+      // Clear selected companies
+      setSelectedCompanies([]);
+    } catch (error) {
+      console.error('Error updating liked companies:', error);
+      
+      // Remove loading state in case of error
+      setCompanies(prevCompanies => 
+        prevCompanies.map(company => 
+          selectedCompanies.some(selected => selected.id === company.id)
+            ? { ...company, isLoading: false }
+            : company
+        )
+      );
+    }
+  }, [selectedCompanies, setCompanies, setSelectedCompanies]);
 
+
+  
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8">
-      <TableHeader total={total} />
+      <TableHeader handleAddToLiked={handleAddToLiked} total={total} />
       <div className="mt-2 flow-root">
         <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full align-middle">
@@ -143,10 +158,11 @@ const CompanyTable = ({
 };
 
 interface TableHeaderProps {
+    handleAddToLiked: () => void;
     total: number;
   }
 
-const TableHeader = ({ total }: TableHeaderProps) => (
+const TableHeader = ({ handleAddToLiked, total }: TableHeaderProps) => (
   <div className="mt-4 flex flex-col">
     <div className="flex justify-between items-center">
       <h1 className="text-2xl font-semibold text-gray-900">Companies</h1>
@@ -155,6 +171,7 @@ const TableHeader = ({ total }: TableHeaderProps) => (
         <div className="h-6 w-px mr-4 ml-2 bg-gray-300" />
         <button
           type="button"
+          onClick={handleAddToLiked}
           className="border-0 block rounded-md bg-black px-4 py-2 text-center text-sm font-semibold text-white shadow-sm"
         >
           Save
